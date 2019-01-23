@@ -106,13 +106,7 @@ Humanoid.prototype.greet = function() {
 //   language: "Dothraki"
 // })
 // console.log(humTest.greet())
-
-
-
-
-
-
-
+ 
 
   const mage = new Humanoid({
     createdAt: new Date(),
@@ -180,3 +174,68 @@ Humanoid.prototype.greet = function() {
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+//creates Hero and Villain objects that inherit the properties of a Humanoid
+  function Hero(heroAttributes) {
+    Humanoid.call(this, heroAttributes)
+  }
+  function Villain(villainAttributes) {
+    Humanoid.call(this, villainAttributes)
+  }
+
+
+ //creates receiver health damaging methods on both Hero and Villain prototypes
+  Hero.prototype.punch = function(receiver) {
+    receiver.healthPoints -= 20;
+    receiver.dead()
+    return receiver.healthPoints
+  } 
+  
+  Villain.prototype.kick = function(receiver) {
+    receiver.healthPoints -= 20
+    receiver.dead()
+    return receiver.healthPoints
+  } 
+    
+  //Each striking method calls the receivers dead() method to see if health is still above 0
+  Hero.prototype.dead = function() {
+    if (this.healthPoints < 1) {
+      console.log(`${this.name} has died`)
+    }
+  }
+  
+  Villain.prototype.dead = function() {
+    if (this.healthPoints < 1) {
+      console.log(`${this.name} has died`)
+    }
+  }
+  
+  
+  //Instatiates Hero and Villain objects
+  const hero_character = new Hero({
+    healthPoints: 100,
+    name: "Hero"
+  })
+  
+  const villain_character = new Villain({
+    healthPoints: 100,
+    name: "Villain"
+  })
+  
+  
+  
+  //The Battle:
+  console.log(villain_character.kick(hero_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(villain_character.kick(hero_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(villain_character.kick(hero_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(villain_character.kick(hero_character))
+  //Death blow recieved by the Villain
+  console.log(hero_character.punch(villain_character))
+  
+  
+  
+  

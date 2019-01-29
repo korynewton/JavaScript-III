@@ -41,7 +41,73 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+function GameObject(details) {
+  this.createdAt = details.createdAt;
+  this.dimensions = details.dimensions;
+}
+
+GameObject.prototype.destroy = function() {
+  return `${this.name || "Object" } was removed from the game.`
+} 
+
+
+//Testing:
+const sword = new GameObject({
+  createdAt: '12pm',
+  dimensions:'large'
+})
+console.log(sword.destroy())
+
+//CharacterStats: inherits from parent (GameObject)
+function CharacterStats(statAttributes) {
+  GameObject.call(this, statAttributes);
+  this.healthPoints = statAttributes.healthPoints;
+  this.name = statAttributes.name;
+}
+//Prototype inheritance
+CharacterStats.prototype = Object.create(GameObject.prototype)
+
+//Prototype additions new to CharacterStats
+CharacterStats.prototype.takeDamage = function() {
+  return `${this.name} took damage`
+}
+
+// testing:
+// const statTest = new CharacterStats({
+//   createdAt: '12pm',
+//   dimensions:'large',
+//   name: "Link"
+// })
+// console.log(statTest.takeDamage())
+
+
+//Humanoid: inherits all properties of CharacterStat and GameObject
+function Humanoid(humanoidAttributes) {
+  CharacterStats.call(this, humanoidAttributes);
+  this.team = humanoidAttributes.team;
+  this.weapons = humanoidAttributes.weapons;
+  this.language = humanoidAttributes.language;
+}
+
+//Humanoid prototype inheritance from GameObject
+Humanoid.prototype = Object.create(CharacterStats.prototype)
+//Humanoid prototype additions
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}`
+}
+
+//Testing:
+// const humTest = new Humanoid({
+//   createdAt: '12pm',
+//   dimensions:'large',
+//   name: "Humanoid",
+//   team: 'red',
+//   healthPoints : '11pts',
+//   language: "Dothraki"
+// })
+// console.log(humTest.greet())
+ 
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -102,9 +168,74 @@
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+
 
   // Stretch task: 
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+
+//creates Hero and Villain objects that inherit the properties of a Humanoid
+  function Hero(heroAttributes) {
+    Humanoid.call(this, heroAttributes)
+  }
+  function Villain(villainAttributes) {
+    Humanoid.call(this, villainAttributes)
+  }
+
+
+ //creates receiver health damaging methods on both Hero and Villain prototypes
+  Hero.prototype.punch = function(receiver) {
+    receiver.healthPoints -= 20;
+    receiver.dead()
+    return receiver.healthPoints
+  } 
+  
+  Villain.prototype.kick = function(receiver) {
+    receiver.healthPoints -= 20
+    receiver.dead()
+    return receiver.healthPoints
+  } 
+    
+  //Each striking method calls the receivers dead() method to see if health is still above 0
+  Hero.prototype.dead = function() {
+    if (this.healthPoints < 1) {
+      console.log(`${this.name} has died`)
+    }
+  }
+  
+  Villain.prototype.dead = function() {
+    if (this.healthPoints < 1) {
+      console.log(`${this.name} has died`)
+    }
+  }
+  
+  
+  //Instatiates Hero and Villain objects
+  const hero_character = new Hero({
+    healthPoints: 100,
+    name: "Hero"
+  })
+  
+  const villain_character = new Villain({
+    healthPoints: 100,
+    name: "Villain"
+  })
+  
+  
+  
+  //The Battle:
+  console.log(villain_character.kick(hero_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(villain_character.kick(hero_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(villain_character.kick(hero_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(hero_character.punch(villain_character))
+  console.log(villain_character.kick(hero_character))
+  //Death blow recieved by the Villain
+  console.log(hero_character.punch(villain_character))
+  
+  
+  
+  
